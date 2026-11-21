@@ -2160,7 +2160,8 @@ details ol{margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;
       panel.setAttribute('data-k',key);
       [].forEach.call(panel.querySelectorAll('section[data-s]'),function(sec){sec.hidden=(Number(sec.dataset.s)!==f.s);});
     }
-    pos.textContent=(i+1)+' / '+frames.length;
+    pos.textContent=(f.p+1)+' / '+pages.length;
+    pos.title='Page '+(f.p+1)+' of '+pages.length;
     back.disabled=(i===0); next.disabled=(i===frames.length-1);
   }
   function goFull(){
