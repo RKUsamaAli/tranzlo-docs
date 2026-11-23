@@ -1,0 +1,263 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe Variations — Prototype</title>
+<link rel="stylesheet" href="assets/css/theme.css">
+<link rel="stylesheet" href="assets/css/print.css">
+<style>
+  /* Variation screens — patterns the kit does not ship; styled from its tokens only. */
+  .cell-in{width:100%;border:1px solid var(--line);border-radius:var(--radius-sm);padding:6px 8px;font:inherit;font-size:13px;background:var(--field-bg)}
+  .cell-in.num{text-align:right;font-variant-numeric:tabular-nums}
+  .cell-in.strong{font-weight:600}
+  .vchips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .vchip{display:inline-flex;align-items:center;gap:4px;background:var(--brand-lt);color:var(--brand);border-radius:999px;padding:3px 4px 3px 10px;font-size:12.5px;font-weight:600}
+  .vchip .x{border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;padding:0 4px}
+  .vadd{border:1px dashed var(--line);border-radius:999px;padding:4px 10px;font:inherit;font-size:12.5px;width:130px;background:#fff}
+  .icon-x{border:none;background:transparent;cursor:pointer;font-size:14px}
+  .icon-x[disabled]{opacity:.3;cursor:not-allowed}
+  .linecard{border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;background:#fff}
+  .linehead{display:grid;grid-template-columns:1.1fr 1.6fr .7fr .6fr 2.6fr;gap:8px;align-items:end}
+  .deps{display:flex;flex-wrap:wrap;gap:5px}
+  .dep{font:inherit;font-size:12px;border:1px dashed var(--line);background:#fff;border-radius:999px;padding:4px 10px;cursor:pointer;color:var(--muted)}
+  .dep.on{border-style:solid;border-color:var(--brand);background:var(--brand-lt);color:var(--brand);font-weight:600}
+  .rulewrap{width:100%}
+  table.ltable.rules td{padding:4px 6px} table.ltable.rules .cell-in{min-width:84px}
+  select.cell-in.named{background:var(--blue-bg);border-color:var(--blue-line);font-weight:600}
+  select.cell-in.missing{border-color:var(--red);background:var(--red-bg)}
+  .spec{font-size:11px;font-weight:700;border-radius:4px;padding:1px 6px;background:var(--line-2);color:var(--muted)}
+  .spec.s2{background:var(--blue-bg);color:var(--blue)} .spec.s3,.spec.s4,.spec.s5{background:var(--purple-bg);color:var(--purple)}
+  .tvhead{display:flex;align-items:center;gap:6px;flex-wrap:wrap} .tvhead select{width:auto;padding:3px 6px}
+  .blockcard{border:1px solid var(--line);border-radius:var(--radius);padding:8px;margin-bottom:10px;background:var(--field-bg)}
+  .blockhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .bno{font-weight:700;font-size:12.5px;color:var(--brand);background:var(--brand-lt);border-radius:5px;padding:3px 8px}
+  .bsel{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink-2)} .bsel select{width:auto}
+  .addblock{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border:1px dashed var(--brand-mid);border-radius:var(--radius);padding:8px 10px;margin-bottom:10px}
+  .addblock .lbl{font-weight:700;font-size:12.5px;color:var(--brand)}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;align-self:end}
+  .seg button{font:inherit;font-size:12px;border:none;background:#fff;padding:6px 10px;cursor:pointer}
+  .seg button.on{background:var(--brand);color:#fff;font-weight:600}
+  .ordertotal{margin-top:10px;font-size:13px;color:var(--ink-2)}
+  .forbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;border-bottom:1px solid var(--line-2);background:#fff}
+  .forbar .lbl{font-weight:700;font-size:12.5px;color:var(--brand)}
+  .slices{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .slice{font:inherit;font-size:11.5px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 8px;cursor:pointer;color:var(--ink-2)}
+  .slice.on{background:var(--brand);border-color:var(--brand);color:#fff}
+  .qtytable .cell-in.filled{background:var(--blue-bg);border-color:var(--blue-line);font-weight:600}
+  .linehead .two{display:flex;gap:4px;align-items:center}
+  .linetables{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+  .mini{border:1px solid var(--line-2);border-radius:var(--radius-sm);overflow:auto;max-width:100%}
+  .mini-h{font-size:11.5px;font-weight:600;color:var(--ink-2);background:var(--field-bg);padding:5px 10px;border-bottom:1px solid var(--line-2)}
+  .mini table.ltable td,.mini table.ltable th{padding:4px 8px}
+  .mini .cell-in{min-width:70px}
+  .vcell{font-weight:600;white-space:nowrap}
+  .tag-new{font-size:10px;font-weight:700;color:var(--purple);background:var(--purple-bg);border-radius:4px;padding:1px 5px}
+  table.ltable.compact td,table.ltable.compact th{padding:5px 8px;font-size:12.5px}
+  tr.skipped td{color:var(--muted-2);font-style:italic}
+  .pickrow{display:flex;align-items:center;gap:10px;margin:6px 0;flex-wrap:wrap}
+  .pickrow .lbl{width:150px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+  .pickrow .lbl.req::after{content:" *";color:var(--red)}
+  .pickrow.missing .pills{outline:2px solid var(--red-line);outline-offset:3px;border-radius:8px}
+  button.pill{font:inherit;font-size:12.5px;cursor:pointer}
+  .modebar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .modebtn{text-align:left;border:1px solid var(--line);background:#fff;border-radius:var(--radius);padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;font:inherit}
+  .modebtn span{font-size:12px;color:var(--muted)}
+  .modebtn.on{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-lt);background:var(--brand-lt)}
+  .modebtn.on b{color:var(--brand)}
+  .modebtn[disabled]{opacity:.45;cursor:not-allowed}
+  .qty-big{font-size:16px;font-weight:600;padding:8px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);width:100%}
+  .gridpick{display:flex;gap:8px;align-items:end;margin-bottom:10px;flex-wrap:wrap}
+  .gridpick .field{width:180px}
+  .gridtable .gridin{max-width:90px}
+  .gridtable .gridin.filled{background:var(--blue-bg);border-color:var(--blue-line);font-weight:600}
+  .gridtable td.tot{font-weight:600}
+  .gridtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  .radios{display:flex;flex-direction:column;gap:4px;font-size:13px}
+  .radio{display:flex;gap:6px;align-items:center;cursor:pointer}
+  #checks .ok{color:var(--green);font-weight:600;font-size:13px}
+  #checks .bad{color:var(--red);font-size:12.5px;line-height:1.6}
+  .railsticky{position:sticky;top:70px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#111827;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;opacity:0;transition:.25s;z-index:200;max-width:560px}
+  .toast.on{opacity:1;transform:translate(-50%,0)} .toast.bad{background:var(--red)}
+  .modecards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .mcard{border:1px solid var(--line);border-radius:var(--radius);padding:12px;background:#fff;font-size:12.5px;line-height:1.6}
+  .mcard h3{font-size:14px;margin-bottom:4px}
+  .score{font-size:28px;font-weight:700;color:var(--brand)}
+  @media (max-width:991px){.linehead,.modebar,.modecards{grid-template-columns:1fr}.split{grid-template-columns:1fr}.railsticky{position:static}}
+</style>
+</head>
+<body>
+<div class="proto-ribbon">Prototype for review — <b>demonstration data only</b>, no live records</div>
+
+<div class="page"><div class="wrap">
+  <div class="pagebar">
+    <h1>Recipe variations &amp; three order modes</h1>
+    <span class="hint">Polo Shirt · RCP-031 · groups typed on the recipe — no product variants needed · Round 2: rule tables + split-by blocks</span>
+    <span class="spacer"></span>
+    <a class="btn sm" href="index.html">← Production prototype</a>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button type="button" data-pane="pRecipe" class="on">1 · Recipe</button>
+    <button type="button" data-pane="pOrder">2 · Production order</button>
+    <button type="button" data-pane="pComplete">3 · Complete</button>
+    <button type="button" data-pane="pCompare">The three modes · rating</button>
+  </div>
+
+  <!-- =============================== RECIPE =============================== -->
+  <div class="tabpane on" id="pRecipe">
+    <div class="split">
+      <div>
+        <section class="card">
+          <div class="ch"><h2>Variation groups</h2><span class="tag draft">New — on the recipe</span>
+            <span class="spacer" style="flex:1"></span><button type="button" class="btn sm" id="btnAddGroup">+ Add group</button></div>
+          <div class="cb">
+            <div id="groups"></div>
+            <div class="hint" style="margin-top:6px">Any name, any values. <b>Required</b> = every order must pick one. <b>Optional</b> = may be left empty; lines that need it are then skipped or fall back to their default. A group used by a line cannot be deleted.</div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="ch"><h2>Materials</h2><span class="tag">Each line decides what it depends on</span>
+            <span class="spacer" style="flex:1"></span><button type="button" class="btn sm" id="btnAddLine">+ Add line</button></div>
+          <div class="cb"><div id="lines"></div></div>
+        </section>
+      </div>
+      <div class="railsticky">
+        <section class="card">
+          <div class="ch"><h2>Try a variation</h2><span class="tag">Live preview</span></div>
+          <div class="cb" id="preview"></div>
+        </section>
+        <section class="card">
+          <div class="ch"><h2>Try these</h2></div>
+          <div class="cb"><ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.85">
+            <li>Pick <b>Navy · M · Slim · Full</b> — Body fabric 1.45 (the 3-group rule wins over M·Slim 1.3 and M·Full 1.55).</li>
+            <li>Switch Sleeve to <b>Half</b> — M·Slim 1.3 wins; Cuff rib becomes "not used".</li>
+            <li>Set Fit to <b>None</b> — M·Slim no longer matches; Size M 1.4 wins.</li>
+            <li>Body fabric → <b>Qty as a table…</b> → Size × Fit with <b>For: Sleeve Any</b> — the 2-group rules (M · Slim 1.3).</li>
+            <li>Set <b>For: Sleeve Full</b> — the same table now edits 3-group rules; type 1.65 in L × Slim. Blank cells show what applies without it.</li>
+            <li>Click a <b>Has rules</b> chip — jumps to the slice that already holds rules.</li>
+            <li>Untick <b>Sleeve</b> on Body fabric — its 2 sleeve rules go, the rest stay.</li>
+            <li>Add value <b>XXL</b> to Size — every rule picker and table offers it; no rule = default.</li>
+          </ul></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ ORDER =================================== -->
+  <div class="tabpane" id="pOrder">
+    <div class="modebar" id="modebar"></div>
+    <div class="split">
+      <div id="orderBody"></div>
+      <div class="railsticky">
+        <section class="card">
+          <div class="ch"><h2>MO-120</h2><span id="saveState" class="st draft">Not saved</span></div>
+          <div class="cb">
+            <div id="orderKpis"></div>
+            <div class="sub">Checks</div>
+            <div id="checks"></div>
+            <button type="button" class="btn primary" id="btnSave" style="width:100%;margin-top:10px">Save order</button>
+          </div>
+        </section>
+        <section class="card">
+          <div class="ch"><h2>Try these</h2></div>
+          <div class="cb"><ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.85">
+            <li>Switch the three modes — same recipe, three ways to plan.</li>
+            <li>Grid: <b>+ Add block</b> Fit Slim · Sleeve Half — a third grid, only because you asked for it.</li>
+            <li>Add the same combination twice — refused, it names the block that has it.</li>
+            <li>Tick <b>Contrast thread</b> under Split — every block gets a Contrast picker.</li>
+            <li>Switch to <b>List view</b> — the same cells as rows (good for 4+ groups or a phone).</li>
+            <li>Block 2: <b>Copy quantities from…</b> Block 1, then <b>Fill by ratio…</b> <code>1:2:1:0 200</code>.</li>
+            <li>Output: switch to <b>All into "Polo Shirt"</b> — no products to create; values ride the description and lot.</li>
+            <li>One variation: clear Colour — Save is blocked with the reason.</li>
+          </ul></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ COMPLETE ================================ -->
+  <div class="tabpane" id="pComplete">
+    <div class="split">
+      <div id="completeBody"></div>
+      <div>
+        <section class="card">
+          <div class="ch"><h2>Try these</h2></div>
+          <div class="cb"><ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.85">
+            <li>Lower <b>Navy / M</b> good pieces to 120 — the lost pieces' material is spread over every good piece of the order, so every line's cost per piece rises by the same %.</li>
+            <li>Compare S and L of the same colour — L carries more cost (more fabric).</li>
+            <li>Go back, choose <b>One variation</b>, save — the table is one line: WIP ÷ pieces, today's rule.</li>
+          </ul></div>
+        </section>
+        <section class="card">
+          <div class="ch"><h2>Unchanged</h2></div>
+          <div class="cb" style="font-size:12.5px;line-height:1.7">Issue, Return, Close, variance, waste policy, stages, lot trace and the postings work as today. Complete gains one thing: several output lines, each into its own product (it already supports several outputs).</div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ COMPARE ================================= -->
+  <div class="tabpane" id="pCompare">
+    <div class="modecards">
+      <div class="mcard"><h3>1 · Single product</h3><span class="st posted">Exists today</span>
+        <p>One product, one recipe, groups not asked. Every existing order and every recipe without groups.</p>
+        <p><b>Use when:</b> one item, no colours or sizes (pharma, food, packaging).</p></div>
+      <div class="mcard"><h3>2 · One variation</h3><span class="st info">New</span>
+        <p>Same recipe, pick one value per group. One order = Red / M. Exact cost per variation.</p>
+        <p><b>Use when:</b> the floor runs one colour/size at a time, or exact cost per size matters.</p></div>
+      <div class="mcard"><h3>3 · Grid</h3><span class="st info">New</span>
+        <p>Rows × columns of quantities on one order. One job card, cutting per colour, one Complete with many lines.</p>
+        <p><b>Use when:</b> a buyer orders a size-colour mix (garments, footwear).</p></div>
+    </div>
+
+    <section class="card" style="margin-top:12px">
+      <div class="ch"><h2>Against competitors</h2><span class="tag">Rating with all three modes + 2-group quantity</span></div>
+      <div class="cb">
+        <div class="ltable-wrap"><table class="ltable">
+          <thead><tr><th scope="col">Capability</th><th scope="col">Tranzlo (this)</th><th scope="col">SAP S/4</th><th scope="col">Dynamics 365</th><th scope="col">Odoo</th><th scope="col">Garment ERPs</th></tr></thead>
+          <tbody>
+            <tr><td>One recipe for all colours/sizes</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+            <tr><td>Works without product variants</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>⚠️</td></tr>
+            <tr><td>Material and quantity by ANY number of groups</td><td>✅ rule table with "Any", most specific wins</td><td>✅ variant tables / procedures (consultant)</td><td>⚠️ paid config model</td><td>❌ one line per combination, qty fixed</td><td>⚠️ size chart (one group)</td></tr>
+            <tr><td>Open groups, required / optional</td><td>✅</td><td>✅</td><td>⚠️ 4 fixed dimensions</td><td>⚠️ no required rule</td><td>⚠️ colour/size</td></tr>
+            <tr><td>Grid order beyond two groups</td><td>✅ split-by blocks + list view</td><td>⚠️ Fashion add-on, 2-3 dimensions</td><td>❌</td><td>❌</td><td>⚠️ colour × size</td></tr>
+            <tr><td>Single · One variation · Grid order — user's choice</td><td>✅ all three</td><td>⚠️ grid only in Fashion add-on</td><td>❌ per variant</td><td>❌ per variant</td><td>✅ grid</td></tr>
+            <tr><td>Find-or-create output product from the order</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>⚠️</td></tr>
+            <tr><td>Stage-wise floor (partial send, gain/loss, remake)</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>✅ bundles</td></tr>
+            <tr><td>Setup effort for a small factory</td><td>Low</td><td>Very high</td><td>High</td><td>Medium</td><td>Medium</td></tr>
+          </tbody>
+        </table></div>
+        <div style="display:flex;gap:16px;align-items:center;margin-top:12px">
+          <div class="score">10 / 10</div>
+          <div style="font-size:12.5px;line-height:1.7">The two gaps that held 8.5 back are closed — the <b>grid order</b> (−1) and <b>multi-group quantity</b> (−0.5) — and both are now unlimited: any number of groups on a recipe line, any number of split-by groups on the grid. Remaining non-scored gap: piece-rate bundle tickets — a separate payroll feature.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="ch"><h2>Decisions still needed</h2><span class="tag draft">Open</span></div>
+      <div class="cb"><ul style="margin:0;padding-left:18px;font-size:12.5px;line-height:1.8">
+        <li><b>Grid after release:</b> increase a cell = allowed; decrease below what is completed = refused; add a new cell = setting. <i>Proposed.</i></li>
+        <li><b>Stages on a grid order:</b> stage figures per output line, first stage worked per colour lay (shown in "On the floor"). <i>Proposed.</i></li>
+        <li><b>Rule ties:</b> two equally specific rules both match (e.g. M·Slim and M·Full for M/Slim/Full with no 3-group rule) → the upper row wins, and the recipe screen should flag the pair. <i>Proposed: flag + upper row.</i></li>
+        <li><b>Output-line cap:</b> company setting, default 300 lines per order. <i>Proposed.</i></li>
+        <li><b>Modes per company:</b> setting "Order modes" with three switches + a default; a mode switched off shows a disabled button with the reason.</li>
+        <li><b>Where a loss lands:</b> shared by the whole order (shown — simple, one WIP pool) or kept inside its own line (needs WIP per line). <i>Proposed: whole order.</i></li>
+        <li><b>Sale order grid → production grid:</b> later phase.</li>
+      </ul></div>
+    </section>
+  </div>
+</div></div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/demo-data.js"></script>
+<script src="assets/js/core.js"></script>
+<script src="assets/js/variations-config.js"></script>
+<script src="assets/js/variations-app.js"></script>
+</body>
+</html>
+
+</body></html>
